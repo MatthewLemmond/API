@@ -28,16 +28,16 @@ def get_movies():
         data=data
     )
 
-@app.route("/movies/<id>")
-def get_movie(id):
+@app.route("/movies/<title>")
+def get_movie(title):
     data = []
-    print(str(id))
-    movie = db.movies.find_one({'_id': ObjectId(id)})
-    item = {
-        "id": str(movie.get("_id")),
-        "title": movie.get("title")
-    }
-    data.append(item)
+    movies = db.movies.find({'title': title})
+    for movie in movies:
+        item = {
+            "id": str(movie.get("_id")),
+            "title": movie.get("title")
+        }
+        data.append(item)
     return jsonify(
         data=data
     )
