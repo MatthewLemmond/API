@@ -1,17 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+import bson.errors as berrors
 import socket
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/dev"
 mongo = PyMongo(app)
 db = mongo.db
-
-@app.route("/")
-def index():
-    hostname = socket.gethostname()
-    return jsonify(message=f"Welcome to my Movie app running from {hostname}.")
 
 @app.route("/movies")
 def get_movies():
@@ -21,7 +17,7 @@ def get_movies():
         item = {
             "id": str(movie.get("_id")),
             "title": movie.get("title"),
-            # "rating": movie.get(rating, default="None")
+            "rating": movie.get("rating")
         }
         data.append(item)
     return jsonify(
@@ -35,7 +31,8 @@ def get_movie(title):
     for movie in movies:
         item = {
             "id": str(movie.get("_id")),
-            "title": movie.get("title")
+            "title": movie.get("title"),
+            "rating": movie.get("rating")
         }
         data.append(item)
     return jsonify(
@@ -45,9 +42,41 @@ def get_movie(title):
 @app.route("/movies", methods=["POST"])
 def add_movie():
     data = request.get_json(force=True)
-    db.movies.insert_one({"title": data["title"]})
+    print(type(data))
+    db.movies.insert_one({
+        "title": data.get("title"),
+        "rating": data.get("rating")
+    })
     return jsonify(
         message=f"\'{data['title']}\' successfully added."
+    )
+
+@app.route("/movies/<id>", methods=["PUT"])
+def update_rating(id):
+    data = request.get_json(force=True) ["rating"]
+    try:
+        response = db.movies.update_one({"_id": ObjectId(id)},
+            {"$set": {"rating": data
+        }})
+        if response.matched_count:
+            message = f"Movie with ID: \'{id}\' successfully updated with a rating of {data}."
+        else:
+            message=f"Movie with ID: \'{id}\' not found."
+    except berrors.InvalidId:
+        message = f"ID: \'{id}\' is not a valid ID."
+    return jsonify(
+        message=message
+    )
+
+@app.route("/movies/<id>", methods=["DELETE"])
+def delete_movie(id):
+    res = db.movies.delete_one({'_id': ObjectId(id)})
+    if res.deleted_count:
+        message=f"Movie with ID: \'{id}\' successfully removed."
+    else:
+        message=f"Movie with ID: \'{id}\' not found."
+    return jsonify(
+        message=message
     )
 
 if __name__ == "__main__":
