@@ -5,7 +5,7 @@ import bson.errors as berrors
 import socket
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/dev"
+app.config["MONGO_URI"] = "mongodb://mongodb:27017/dev"
 mongo = PyMongo(app)
 db = mongo.db
 
