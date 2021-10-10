@@ -15,14 +15,29 @@ def index():
 
 @app.route("/movies")
 def get_movies():
-    movies = db.movies.find()
     data = []
+    movies = db.movies.find()
     for movie in movies:
         item = {
-            "id": str(movie["_id"]),
-            "title": movie["title"]
+            "id": str(movie.get("_id")),
+            "title": movie.get("title"),
+            # "rating": movie.get(rating, default="None")
         }
         data.append(item)
+    return jsonify(
+        data=data
+    )
+
+@app.route("/movies/<id>")
+def get_movie(id):
+    data = []
+    print(str(id))
+    movie = db.movies.find_one({'_id': ObjectId(id)})
+    item = {
+        "id": str(movie.get("_id")),
+        "title": movie.get("title")
+    }
+    data.append(item)
     return jsonify(
         data=data
     )
