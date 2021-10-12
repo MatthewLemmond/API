@@ -2,10 +2,10 @@ from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 import bson.errors as berrors
-import socket
+import socket, os
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb://mongodb:27017/dev"
+app.config["MONGO_URI"] = f"mongodb://root:{os.environ.get('MONGODB_ROOT_PASSWORD')}@172.21.176.54:27017/dev?authSource=admin"
 mongo = PyMongo(app)
 db = mongo.db
 
