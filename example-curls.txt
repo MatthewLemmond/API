@@ -1,0 +1,18 @@
+# GET the list of movies
+curl https://new-year-new-me-3d0a5ecdb24e7aee232dcd4c16f5380e-0000.us-south.containers.appdomain.cloud/movies
+
+# GET movie(s) by title
+curl https://new-year-new-me-3d0a5ecdb24e7aee232dcd4c16f5380e-0000.us-south.containers.appdomain.cloud/movies/<TITLE>
+
+# POST a movie to the DB with title and rating
+curl -X POST https://new-year-new-me-3d0a5ecdb24e7aee232dcd4c16f5380e-0000.us-south.containers.appdomain.cloud/movies \
+-H "Content-Type: application/json" \
+-d '{"title":"<MOVIE_TITLE>", "rating":"<MOVIE_RATING>"}'
+
+# PUT update the rating on a movie, opinions change
+curl -X PUT https://new-year-new-me-3d0a5ecdb24e7aee232dcd4c16f5380e-0000.us-south.containers.appdomain.cloud/movies/<id> \
+-H "Content-Type: application/json" \
+-d '{"rating":"<MOVIE_RATING>"}'
+
+# DELETE a movie based on its ID
+curl -X DELETE https://new-year-new-me-3d0a5ecdb24e7aee232dcd4c16f5380e-0000.us-south.containers.appdomain.cloud/movies/<id> \
